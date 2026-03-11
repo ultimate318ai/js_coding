@@ -1,17 +1,17 @@
 import { readFromFile } from "../common.js";
 
 
-function parseFileContent(fileName) {
+function parseFileContent(fileName: string): number[] {
     const content = readFromFile(fileName);
     return content.split('\n').reduce((callorieAmoundPerElfList, currentLine) => {
         if (currentLine === "") {
             return callorieAmoundPerElfList.concat(0);
         }
-        callorieAmoundPerElfList[[callorieAmoundPerElfList.length - 1]] += +currentLine
+        callorieAmoundPerElfList[callorieAmoundPerElfList.length - 1] += +currentLine
         return callorieAmoundPerElfList
     }, [0])
 }
-function day1() {
+function day1(): void {
     const callorieAmoundPerElfList = parseFileContent("./input.txt")
     // first part
     const { maximum: maxinumCaloriesValue } = callorieAmoundPerElfList.reduce((data, currentValue, index) => {
