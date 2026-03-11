@@ -3,7 +3,7 @@ import { readFromFile } from "../common.js";
 
 function parseFileContent(fileName: string): number[] {
     const content = readFromFile(fileName);
-    return content.split('\n').reduce((callorieAmoundPerElfList, currentLine) => {
+    return content.split('\n').reduce((callorieAmoundPerElfList: number[], currentLine: string) => {
         if (currentLine === "") {
             return callorieAmoundPerElfList.concat(0);
         }
