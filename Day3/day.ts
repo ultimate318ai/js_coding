@@ -33,14 +33,8 @@ function day3() {
 
     // first part
     const result = fileContent.reduce((totalPriority, {left, right}) => {
-
         const commonLetter = getCommonLetterFrom(left, right)
-        console.log(commonLetter)
-
         const letterPriority = getLetterPriority(commonLetter)
-        console.log(letterPriority)
-
-        
         return totalPriority + letterPriority
         
     }, 0)
