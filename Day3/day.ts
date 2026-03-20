@@ -3,7 +3,7 @@
 import { readFromFile } from "../common.js";
 
 
-function parseFileContent(fileName: string): {left: string[], right: string[]}[] {
+function parseFileContentFirstPart(fileName: string): {left: string[], right: string[]}[] {
     const content: string = readFromFile(fileName);
     return content.split('\n').map((line) => {
 
@@ -18,8 +18,29 @@ function parseFileContent(fileName: string): {left: string[], right: string[]}[]
     )
 }
 
-function getCommonLetterFrom(left: string[], right: string[]): string{
-    return [...new Set(left).intersection(new Set(right))][0]
+function parseFileContentSecondPart(fileName: string): {one: string[], two: string[], three: string[]}[] {
+    const content: string = readFromFile(fileName);
+    const buffer: string[][] = []
+
+    return content.split('\n').reduce((result, line, index) => {
+        if (index !== 0 && index % 3 === 0){
+            const one = buffer.pop()
+            const two = buffer.pop()
+            const three =  buffer.pop()
+            if (one === undefined || two === undefined  || three === undefined){
+                throw Error("expected three element is buffer")
+            }
+            buffer.push(line.split(""))
+            return result.concat([{one, two, three}])
+        }
+        buffer.push(line.split(""))
+        return result
+    }, [] as {one: string[], two: string[], three: string[]}[])
+
+}
+
+function getCommonLetterFrom(...args: string[][]): string{
+    return [...args.reduce((commonLetter, arg) => commonLetter.intersection(new Set(arg)), new Set(args[0]))][0]
 }
 
 function getLetterPriority(letter: string) : number{
@@ -29,7 +50,7 @@ function getLetterPriority(letter: string) : number{
 
 function day3() {
 
-    const fileContent = parseFileContent("./input.txt")
+    const fileContent = parseFileContentFirstPart("./input.txt")
 
     // first part
     const result = fileContent.reduce((totalPriority, {left, right}) => {
@@ -39,6 +60,17 @@ function day3() {
         
     }, 0)
     console.log(result)
+
+    const fileContent2 = parseFileContentSecondPart("./input.txt")
+
+    // second part
+    const result2 = fileContent2.reduce((totalPriority, {one, two, three}) => {
+        const commonLetter = getCommonLetterFrom(one, two, three)
+        const letterPriority = getLetterPriority(commonLetter)
+        return totalPriority + letterPriority
+        
+    }, 0)
+    console.log(result2)
     
 }
 
