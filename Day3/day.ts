@@ -19,18 +19,18 @@ function parseFileContentFirstPart(fileName: string): {left: string[], right: st
 }
 
 function parseFileContentSecondPart(fileName: string): {one: string[], two: string[], three: string[]}[] {
-    const content: string = readFromFile(fileName);
+    const content: string[] = readFromFile(fileName).split("\n");
     const buffer: string[][] = []
 
-    return content.split('\n').reduce((result, line, index) => {
-        if (index !== 0 && index % 3 === 0){
+    return content.reduce((result, line, index) => {
+        if ((index + 1) % 3 === 0){
+            buffer.push(line.split(""))
             const one = buffer.pop()
             const two = buffer.pop()
             const three =  buffer.pop()
             if (one === undefined || two === undefined  || three === undefined){
                 throw Error("expected three element is buffer")
             }
-            buffer.push(line.split(""))
             return result.concat([{one, two, three}])
         }
         buffer.push(line.split(""))
