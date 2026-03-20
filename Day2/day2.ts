@@ -4,11 +4,25 @@ import { readFromFile } from "../common.js";
 
 type Round = {opponentAction: OponentAction, userAction: UserAction}
 
+
 type OponentAction = "A" | "B" | "C";
 
 type UserAction = "X" | "Y" | "Z";
 
 type RoundResult = "Won" | "Draw" | "Lost"
+
+const roundExpectedResult : Record<UserAction, RoundResult> = {
+    "X": "Lost",
+    "Y": "Draw",
+    "Z": "Won",
+}
+
+const actionResultsMapping : Record<OponentAction, Record<RoundResult, UserAction>> = {
+    "A":  {"Lost": "Z", "Draw": "X", "Won": "Y"},
+    "B": {"Lost": "X", "Draw": "Y", "Won": "Z"},
+    "C": {"Lost": "Y", "Draw": "Z", "Won": "X"}
+}
+
 
 const actionScore: Record<UserAction, number> = {
     "X": 1,
@@ -31,9 +45,22 @@ function parseFileContent(fileName: string): {opponentAction: OponentAction, use
     })
 }
 
-function parseRound(action: Round) {
+function parseRound(action: Round): number {
     return actionScore[action.userAction] + roundScore[getRoundResult(action)]
 
+}
+
+function parseSecondRound(action: Round): number {
+
+    const {opponentAction, userAction} = action;
+
+    //now X is a lost, Y is draw, and Z is win.
+
+
+    const expectedRoundResult = roundExpectedResult[userAction]
+    const actionResultMapping = actionResultsMapping[opponentAction][expectedRoundResult]
+
+    return actionScore[actionResultMapping] + roundScore[expectedRoundResult]
 }
 
 function getRoundResult(action: Round): RoundResult {
@@ -74,10 +101,18 @@ function getRoundResult(action: Round): RoundResult {
 
 function day2() {
 
-    const resultScoreList =  parseFileContent("./input.txt").map((round) => parseRound(round))
+    const fileContent = parseFileContent("./input.txt")
+
+    // first part
+    const resultScoreList =  fileContent.map((round) => parseRound(round))
     const roundsResult = resultScoreList.reduce((currentScore, score) => currentScore + score, 0)
-    // console.log(resultScoreList)
     console.log(roundsResult)
+
+    //second part
+    const secondRoundResult = fileContent.map((round) => parseSecondRound(round))
+    const secondRoundsResult =  secondRoundResult.reduce((currentScore, score) => currentScore + score, 0)
+
+    console.log(secondRoundsResult)
 }
 
 day2()
