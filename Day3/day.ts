@@ -19,11 +19,11 @@ function parseFileContent(fileName: string): {left: string[], right: string[]}[]
 }
 
 function getCommonLetterFrom(left: string[], right: string[]): string{
-    return [...new Set([...left, ...right])][0]
+    return [...new Set(left).intersection(new Set(right))][0]
 }
 
 function getLetterPriority(letter: string) : number{
-    return letter.charCodeAt(0) - (letter.toUpperCase() === letter ? 36 : 96)
+    return letter.charCodeAt(0) - (letter.toUpperCase() === letter ? 38 : 96)
 }
 
 
@@ -32,7 +32,18 @@ function day3() {
     const fileContent = parseFileContent("./input.txt")
 
     // first part
-    const result = fileContent.reduce((totalPriority, {left, right}) => totalPriority + getLetterPriority(getCommonLetterFrom(left, right)), 0)
+    const result = fileContent.reduce((totalPriority, {left, right}) => {
+
+        const commonLetter = getCommonLetterFrom(left, right)
+        console.log(commonLetter)
+
+        const letterPriority = getLetterPriority(commonLetter)
+        console.log(letterPriority)
+
+        
+        return totalPriority + letterPriority
+        
+    }, 0)
     console.log(result)
     
 }
